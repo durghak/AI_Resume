@@ -20,7 +20,9 @@ app.add_middleware(
     allow_methods=["*"],           # Allows all methods (GET, POST, etc.)
     allow_headers=["*"],           # Allows all headers
 )
-
+@app.get("/")
+def root():
+    return {"status": "AI Resume Builder backend running"}
 @app.get("/health")
 def health_check():
     return {"status": "Backend is running 🚀"}
