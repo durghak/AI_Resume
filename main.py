@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from resume.schemas import ResumeInput,UserQuery
 import os
 from dotenv import load_dotenv
-import requests,httpx
+# import requests,httpx
 from openai import OpenAI
 # from resume.ai_services import generate_resume
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,53 +31,53 @@ def submit_resume(data:ResumeInput):
         "data": data
     }
 
-@app.post("/ask")
-async def ask_ai(query: UserQuery):
-    print(f"Sending to Ollama: {query.prompt}") # Debug print
+# @app.post("/ask")
+# async def ask_ai(query: UserQuery):
+#     print(f"Sending to Ollama: {query.prompt}") # Debug print
     
-    async with httpx.AsyncClient() as client:
-        try:
-            # timeout=None is key! It prevents the 'loading' hang from timing out early.
-            response = await client.post(
-                "http://localhost:11434/api/generate",
-                json={
-                    "model": "tinyllama",
-                    "prompt": query.prompt,
-                    "stream": False
-                },
-                timeout=300.0
-            )
+#     async with httpx.AsyncClient() as client:
+#         try:
+#             # timeout=None is key! It prevents the 'loading' hang from timing out early.
+#             response = await client.post(
+#                 "http://localhost:11434/api/generate",
+#                 json={
+#                     "model": "tinyllama",
+#                     "prompt": query.prompt,
+#                     "stream": False
+#                 },
+#                 timeout=300.0
+#             )
             
-            result = response.json()
-            # print(f"response from Ollama: {result}")
-            print(f"response text from Ollama: {result.get('response')}")   
-            return {"answer": result.get("response")}
+#             result = response.json()
+#             # print(f"response from Ollama: {result}")
+#             print(f"response text from Ollama: {result.get('response')}")   
+#             return {"answer": result.get("response")}
 
-        except Exception as e:
-            print(f"Error occurred: {e}")
-            raise HTTPException(status_code=500, detail=str(e))
+#         except Exception as e:
+#             print(f"Error occurred: {e}")
+#             raise HTTPException(status_code=500, detail=str(e))
   
 
-@app.post("/openai")
-async def ask_aii(query: UserQuery):
-    try:
-        # Standard OpenAI Chat Completion call
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",  # Best for resumes: fast and very cheap
-            messages=[
-                # {"role": "system", "content": "You are a professional resume expert."},
-                {"role": "user", "content": query.prompt}
-            ],
-            temperature=0.7
-        )
+# @app.post("/openai")
+# async def ask_aii(query: UserQuery):
+#     try:
+#         # Standard OpenAI Chat Completion call
+#         response = client.chat.completions.create(
+#             model="gpt-4o-mini",  # Best for resumes: fast and very cheap
+#             messages=[
+#                 # {"role": "system", "content": "You are a professional resume expert."},
+#                 {"role": "user", "content": query.prompt}
+#             ],
+#             temperature=0.7
+#         )
         
-        # The library parses the JSON for you!
-        answer = response.choices[0].message.content
-        return {"answer": answer}
+#         # The library parses the JSON for you!
+#         answer = response.choices[0].message.content
+#         return {"answer": answer}
 
-    except Exception as e:
-        # This will catch things like 'insufficient credits' or 'invalid key'
-        raise HTTPException(status_code=500, detail=str(e))
+#     except Exception as e:
+#         # This will catch things like 'insufficient credits' or 'invalid key'
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 # @app.post("/ai/generate")
